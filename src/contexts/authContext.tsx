@@ -29,6 +29,7 @@ import {
 } from "../utils/localStorageUtils";
 import { TelegramAuthResponse } from "../telegram/types/types";
 import { backendAxios } from "../utils/axiosConfig";
+import { useTonConnectUI } from "@tonconnect/ui-react";
 
 // ------------------------------------------------------------------------------------ //
 
@@ -63,6 +64,8 @@ export const GoogleAuthContextProvider = ({
 }) => {
   const [loading, setLoading] = useState(true);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+
+  const [tonConnectUI] = useTonConnectUI();
   //
   //const errorContext = useErrorContext();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -223,6 +226,7 @@ export const GoogleAuthContextProvider = ({
 
     clearGoogleAuthToken();
     clearUserDbId();
+    tonConnectUI.disconnect();
     try {
       await signOut(auth);
     } catch (error) {
@@ -284,6 +288,8 @@ export const TelegramAuthContextProvider = ({
   );
   const [loading, setLoading] = useState(false);
 
+  const [tonConnectUI] = useTonConnectUI();
+
   // error handling
   const errorContext = useErrorContext();
   const navigate = useNavigate();
@@ -332,6 +338,8 @@ export const TelegramAuthContextProvider = ({
     clearTelegramAuthToken();
     clearUserDbId();
     setAuthResponse(null);
+
+    tonConnectUI.disconnect();
 
     // navigate to login page
     navigate(BASE_ROUTE, { replace: true });

@@ -23,18 +23,18 @@ export const App = () => {
   return (
     // context for error handling
     <ErrorContextProvider>
-      {/* context for telegram auth handling */}
-      <TelegramAuthContextProvider>
-        {/* context for google auth handling */}
-        <GoogleAuthContextProvider>
-          {/* context for tonconnect handling */}
-          <TonConnectUIProvider
-            manifestUrl={`${BASE_HTTPS_URL}/tonconnect-manifest.json`}
-          >
+      {/* context for tonconnect handling */}
+      <TonConnectUIProvider
+        manifestUrl={`${BASE_HTTPS_URL}/tonconnect-manifest.json`}
+      >
+        {/* context for telegram auth handling */}
+        <TelegramAuthContextProvider>
+          {/* context for google auth handling */}
+          <GoogleAuthContextProvider>
             <Outlet />
-          </TonConnectUIProvider>
-        </GoogleAuthContextProvider>
-      </TelegramAuthContextProvider>
+          </GoogleAuthContextProvider>
+        </TelegramAuthContextProvider>
+      </TonConnectUIProvider>
     </ErrorContextProvider>
   );
 };

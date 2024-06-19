@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useErrorContext } from "../../contexts/useContext";
 import { ERROR_ROUTE } from "../../static/routes";
 import { UserBalanceDto } from "../../types/userBalanceResponseType";
+import { LinkToLoginPage } from "../../components/Links";
 
 export const TonConnectPage = () => {
   const [loading, setLoading] = useState(true);
@@ -109,6 +110,7 @@ export const TonConnectPage = () => {
 
   return (
     <Box sx={{ width: "100%" }}>
+      <LinkToLoginPage />
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <TonConnectButton />
       </Box>
@@ -122,7 +124,7 @@ export const TonConnectPage = () => {
       >
         Get user balance
       </Button>
-      {userTonBalance && <Typography>{userTonBalance}</Typography>}
+      {userTonBalance && <Typography>{userTonBalance + " TON"}</Typography>}
       {connectedAddress && (
         <>
           <Typography variant="body1">Wallet: {connectedAddress}</Typography>

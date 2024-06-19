@@ -8,7 +8,9 @@ import { ERROR_ROUTE } from "../static/routes";
 import {
   LinkToVideoFromCameraPage,
   LinkToPhotosPage,
+  LinkToSubscriptionPage,
 } from "../components/Links";
+import { TonConnectPage } from "./tonConnect/TonConnectPage";
 
 export function TelegramLoggedInUser() {
   const telegramAuthContext = useTelegramAuthContext();
@@ -32,6 +34,7 @@ export function TelegramLoggedInUser() {
         <p>User authenticated</p>
         <hr />
         <div className="column">
+          <LinkToSubscriptionPage />
           <LogOutFromTelegramButton />
           <LinkToVideoFromCameraPage />
           <LinkToPhotosPage />
