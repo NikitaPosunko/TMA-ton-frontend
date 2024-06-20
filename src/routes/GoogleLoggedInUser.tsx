@@ -33,7 +33,7 @@ export function GoogleLoggedInUser() {
   return (
     <div>
       <h2>GoogleLoggedInUser</h2>
-      {currentUser ? (
+      {/*currentUser ? (
         <>
           <h2>user: {currentUser.displayName}</h2>
           <hr />
@@ -51,7 +51,22 @@ export function GoogleLoggedInUser() {
         </>
       ) : (
         <h2>No user</h2>
-      )}
+      )*/}
+      <>
+          <h2>user: DisplayName</h2>
+          <hr />
+
+          <LinkToSubscriptionPage />
+          <hr />
+          <p>Email</p>
+          <img src={/*currentUser.photoURL ?? ""*/ "https://www.pngfind.com/pngs/m/610-6104451_image-placeholder-png-user-profile-placeholder-image-png.png"} alt="user photo" />
+          <hr />
+          <div className="column">
+            <LogOutFromGoogleButton />
+            <LinkToVideoFromCameraPage />
+            <LinkToPhotosPage />
+          </div>
+        </>
     </div>
   );
 }

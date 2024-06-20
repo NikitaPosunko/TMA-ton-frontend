@@ -57,9 +57,9 @@ const router = createBrowserRouter([
       {
         path: VIDEO_FROM_CAMERA_ROUTE,
         element: (
-          <LoginProtection>
+          //<LoginProtection>
             <VideoFromCamera />
-          </LoginProtection>
+          //</LoginProtection>
         ),
       },
       {
@@ -73,19 +73,19 @@ const router = createBrowserRouter([
       {
         path: SUBSCRIPTION_PAGE_ROUTE,
         element: (
-          <LoginProtection>
+          //<LoginProtection>
             <TonConnectPage />
-          </LoginProtection>
+          //</LoginProtection>
         ),
       },
       {
         path: SUBSCRIPTION_ADMIN_PAGE_ROUTE,
         element: (
-          <LoginProtection>
+          //<LoginProtection>
             <AdminProtection>
               <SubscriptionAdminPage />
             </AdminProtection>
-          </LoginProtection>
+          //</LoginProtection>
         ),
       },
       {
