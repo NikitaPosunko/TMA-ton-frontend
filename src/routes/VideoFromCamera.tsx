@@ -1,8 +1,10 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { useErrorContext } from "../contexts/useContext";
 import { useNavigate } from "react-router-dom";
 import { ERROR_ROUTE } from "../static/routes";
+import { getLastPage } from "../utils/localStorageUtils";
+import { webApp } from "../telegram/webApp";
 
 const DATA_AVAILABLE_EVENT = "dataavailable";
 
@@ -88,6 +90,24 @@ export const VideoFromCamera = () => {
       setRecordedChunks([]);
     }
   }, [recordedChunks]);
+
+
+  //Mini apps buttons setting
+  useEffect(() => {
+    function backButtonClick() {
+      const page = getLastPage();
+      navigate(page === null ? "/" : page, {replace: true});
+    }
+
+    webApp?.BackButton.show();
+    webApp?.BackButton.onClick(backButtonClick);
+
+    return () => {
+      webApp?.BackButton.hide();
+      webApp?.BackButton.offClick(backButtonClick);  
+    }
+  }, [webApp])
+
 
   return (
     <>

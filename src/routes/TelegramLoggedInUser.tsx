@@ -10,7 +10,9 @@ import {
   LinkToPhotosPage,
   LinkToSubscriptionPage,
 } from "../components/Links";
-import { TonConnectPage } from "./tonConnect/TonConnectPage";
+import { TELEGRAM_USER_ROUTE } from "../static/routes";
+import { webApp } from "../telegram/webApp";
+//import { TonConnectPage } from "./tonConnect/TonConnectPage";
 
 export function TelegramLoggedInUser() {
   const telegramAuthContext = useTelegramAuthContext();
@@ -24,45 +26,49 @@ export function TelegramLoggedInUser() {
     navigate(ERROR_ROUTE, { replace: true });
   };
 
-  //if (!userInfo) {
-  //  telegramAuthContext.doLogOutFromTelegram();
-  //  handleError({ message: `${JSON.stringify(userInfo)}` });
- // } else {
+  webApp?.BackButton.hide();
+
+  if (!userInfo) {
+    telegramAuthContext.doLogOutFromTelegram();
+    handleError({ message: `${JSON.stringify(userInfo)}` });
+  } else {
     return (
-      <>
+      <div className="page">
         <h2>User Page</h2>
         <p>User authenticated</p>
         <hr />
         <div className="column">
-          <LinkToSubscriptionPage />
-          <LogOutFromTelegramButton />
-          <LinkToVideoFromCameraPage />
-          <LinkToPhotosPage />
+          <LinkToSubscriptionPage lastPage={TELEGRAM_USER_ROUTE}/>
         </div>
         <hr />
         <h2>Telegram User Info:</h2>
 
-        {/*userInfo.last_name &&*/ <p>User Last Name: {/*userInfo.last_name*/}</p>}
-        {/*userInfo.username &&*/ <p>User Username: {/*userInfo.username*/}</p>}
-        {/*userInfo.language_code &&*/ (
-          <p>User Language Code: {/*userInfo.language_code*/}</p>
+        {userInfo.last_name && <p>User Last Name: {userInfo.last_name}</p>}
+        {userInfo.username && <p>User Username: {userInfo.username}</p>}
+        {userInfo.language_code && (
+          <p>User Language Code: {userInfo.language_code}</p>
         )}
-        {/*userInfo.photo_url &&*/ (
+        {userInfo.photo_url && (
           <>
-            <p>User Photo URL: {/*userInfo.photo_url*/}</p>
-            <img src={/*userInfo.photo_url*/ "https://www.pngfind.com/pngs/m/610-6104451_image-placeholder-png-user-profile-placeholder-image-png.png"} alt="profile" />
+            <p>User Photo URL: {userInfo.photo_url}</p>
+            <img src={userInfo.photo_url} alt="profile" />
           </>
         )}
-        <p>User Is Bot: {/*userInfo.is_bot ? "Yes" : "No"*/}</p>
-        <p>User Is Premium: {/*userInfo.is_premium ? "Yes" : "No"*/}</p>
+        <p>User Is Bot: {userInfo.is_bot ? "Yes" : "No"}</p>
+        <p>User Is Premium: {userInfo.is_premium ? "Yes" : "No"}</p>
         <p>
           User Added To Attachment Menu:{" "}
-          {/*userInfo.added_to_attachment_menu ? "Yes" : "No"*/}
+          {userInfo.added_to_attachment_menu ? "Yes" : "No"}
         </p>
         <p>
-          User Allows Write To PM: {/*userInfo.allows_write_to_pm ? "Yes" : "No"*/}
+          User Allows Write To PM: {userInfo.allows_write_to_pm ? "Yes" : "No"}
         </p>
-      </>
+        <div style={{width: "68vw"}}>
+          <LinkToVideoFromCameraPage lastPage={TELEGRAM_USER_ROUTE} />
+          <LinkToPhotosPage lastPage={TELEGRAM_USER_ROUTE} />
+          <LogOutFromTelegramButton />
+        </div>
+      </div>
     );
   }
-//}
+}

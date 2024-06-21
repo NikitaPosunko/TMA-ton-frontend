@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { ERROR_ROUTE } from "../static/routes";
 import { BACKEND_SUBSCRIPTION_PHOTOS_REQUEST } from "../static/url";
 import { LinkToLoginPage } from "../components/Links";
+import { webApp } from "../telegram/webApp";
+import { getLastPage } from "../utils/localStorageUtils";
 
 export const Photos = () => {
   const [loading, setLoading] = useState(true);
@@ -33,6 +35,23 @@ export const Photos = () => {
     fetchUserData();
   });
 
+  //Mini apps buttons setting
+  useEffect(() => {
+    function backButtonClick() {
+      const page = getLastPage();
+      navigate(page === null ? "/" : page, {replace: true});
+    }
+
+    webApp?.BackButton.show();
+    webApp?.BackButton.onClick(backButtonClick);
+
+    return () => {
+      webApp?.BackButton.hide();
+      webApp?.BackButton.offClick(backButtonClick);  
+    }
+  }, [webApp])
+
+  
   if (loading) {
     return <div>Loading...</div>;
   }

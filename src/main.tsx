@@ -16,7 +16,9 @@ import {
   TELEGRAM_USER_ROUTE,
   TEST_HOME_ROUTE,
   VIDEO_FROM_CAMERA_ROUTE,
+  TEMP
 } from "./static/routes.tsx";
+
 import { Login } from "./routes/Login.tsx";
 
 import { ErrorPageWithMessage } from "./components/error/ErrorPageWithMessage.tsx";
@@ -25,6 +27,7 @@ import { Photos } from "./routes/Photos.tsx";
 import { AuthPage } from "./routes/AuthPage.tsx";
 import { TonConnectPage } from "./routes/tonConnect/TonConnectPage.tsx";
 import { SubscriptionAdminPage } from "./routes/SubscriptionAdminPage.tsx";
+import Temp from "./routes/Temp.tsx";
 import {
   AdminProtection,
   LoginProtection,
@@ -33,7 +36,7 @@ import {
 // Create router
 const router = createBrowserRouter([
   {
-    path: BASE_ROUTE,
+    path: TEMP,
     element: <App />,
     errorElement: <RouterErrorPage />,
     children: [
@@ -42,8 +45,11 @@ const router = createBrowserRouter([
         element: <ErrorPageWithMessage />,
       },
       {
-        //path: LOGIN_ROUTE,
         index: true,
+        element: <Temp />,
+      },
+      {
+        path: BASE_ROUTE,
         element: <Login />,
       },
       {
@@ -57,9 +63,9 @@ const router = createBrowserRouter([
       {
         path: VIDEO_FROM_CAMERA_ROUTE,
         element: (
-          //<LoginProtection>
+          <LoginProtection>
             <VideoFromCamera />
-          //</LoginProtection>
+          </LoginProtection>
         ),
       },
       {
@@ -73,19 +79,19 @@ const router = createBrowserRouter([
       {
         path: SUBSCRIPTION_PAGE_ROUTE,
         element: (
-          //<LoginProtection>
+          <LoginProtection>
             <TonConnectPage />
-          //</LoginProtection>
+          </LoginProtection>
         ),
       },
       {
         path: SUBSCRIPTION_ADMIN_PAGE_ROUTE,
         element: (
-          //<LoginProtection>
+          <LoginProtection>
             <AdminProtection>
               <SubscriptionAdminPage />
             </AdminProtection>
-          //</LoginProtection>
+          </LoginProtection>
         ),
       },
       {

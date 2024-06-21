@@ -1,4 +1,4 @@
-export const BASE_ROUTE = "/";
+export const BASE_ROUTE = "/login";
 export const TELEGRAM_USER_ROUTE = "/telegram-user";
 export const GOOGLE_USER_ROUTE = "/google-user";
 export const ERROR_ROUTE = "/error";
@@ -7,3 +7,4 @@ export const PHOTOS_ROUTE = "/photos";
 export const TEST_HOME_ROUTE = "/test-home";
 export const SUBSCRIPTION_PAGE_ROUTE = "/subscription";
 export const SUBSCRIPTION_ADMIN_PAGE_ROUTE = "/subscription-admin";
+export const TEMP = "/";

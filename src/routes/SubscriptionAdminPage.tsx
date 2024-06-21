@@ -1,5 +1,7 @@
-import { Button } from "@mui/material";
+//import { Button } from "@mui/material";
 import { TonConnectButton, useTonAddress } from "@tonconnect/ui-react";
+import { webApp } from "../telegram/webApp";
+import { getLastPage } from "../utils/localStorageUtils";
 import { useCallback, useEffect, useState } from "react";
 import {
   BACKEND_GET_ADMIN_CONFIG_REQUEST,
@@ -55,16 +57,16 @@ export const SubscriptionAdminPage = () => {
       }
     };
 
-    // // ton connection tracking
-    // const unsubscribe = tonConnectUI.onStatusChange((wallet) => {
-    //   setWallet(wallet);
-    // });
+     // ton connection tracking
+     //nst unsubscribe = tonConnectUI.onStatusChange((wallet) => {
+     //setWallet(wallet);
+     //;
 
     getAdminConfig();
 
-    // return () => {
-    //   unsubscribe();
-    // };
+     //return () => {
+     //  unsubscribe();
+     //};
   }, [handleError]);
 
   // backend request to set new admin wallet
@@ -74,9 +76,48 @@ export const SubscriptionAdminPage = () => {
     });
   };
 
+
+  //Mini apps buttons setting
+  useEffect(() => {
+    async function mainButtonClick() {
+      try {
+        const adminConfig = (await doSetNewAdminWallet()).data;
+        setAdminConfig(adminConfig);
+      } catch (error) {
+        handleError(error as { message: string });
+      }
+    }
+
+    function backButtonClick() {
+      const page = getLastPage();
+      navigate(page === null ? "/" : page, {replace: true});
+    }
+
+    if (webApp !== null) {
+      const MainButton = webApp.MainButton;
+      const BackButton = webApp.BackButton;
+
+      MainButton.show();
+      MainButton.setText("Buy subscription --- Send transaction");
+      MainButton.onClick(mainButtonClick);
+
+      BackButton.show();
+      BackButton.onClick(backButtonClick);
+    }
+
+    return () => {
+      webApp?.MainButton.offClick(mainButtonClick);
+      webApp?.MainButton.hide();
+
+      webApp?.BackButton.offClick(backButtonClick);
+      webApp?.BackButton.hide();
+    }
+  }, [webApp]);
+
+
   if (loading) return <Loading />;
   return (
-    <>
+    <div className="page">
       <h2>Subscription Admin Page</h2>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <TonConnectButton />
@@ -101,23 +142,43 @@ export const SubscriptionAdminPage = () => {
 
       {address && (
         <>
-          <div>
+          <p>
             Connected wallet: {address} {/*{wallet.account.address} */}
-          </div>
-          <Button
+          </p>
+          {
+            /*
+                  -------------------------HIDE THIS BUTTON AND USE MAIN BUTTON FROM TMA--------------------
+
+              <Button
+            variant="outlined"
             onClick={async () => {
               try {
-                const adminConfig = (await doSetNewAdminWallet()).data;
-                setAdminConfig(adminConfig);
+                //const adminConfig = (await doSetNewAdminWallet()).data;
+                //setAdminConfig(adminConfig);
               } catch (error) {
-                handleError(error as { message: string });
+                //handleError(error as { message: string });
               }
+            }}
+            sx={{
+              mt: 2,
+              mb: 2,
+              backgroundColor: "var(--tg-theme-section-bg-color)",
+              color: "var(--tg-theme-button-text-color)",
+              borderColor: "var(--tg-theme-button-color)",
+              p: 2, // Add padding for spacing
+              '&:hover': {
+                backgroundColor: "var(--tg-theme-secondary-bg-color)",
+                borderColor: "var(--tg-theme-link-color)",
+                opacity: "0.7"
+              },
             }}
           >
             Set admin wallet
           </Button>
+            */
+          }
         </>
       )}
-    </>
+    </div>
   );
 };

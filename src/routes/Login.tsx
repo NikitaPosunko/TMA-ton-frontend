@@ -11,6 +11,7 @@ import {
   ERROR_ROUTE,
   GOOGLE_USER_ROUTE,
   TELEGRAM_USER_ROUTE,
+  BASE_ROUTE
 } from "../static/routes";
 import { auth } from "../firebase/firebaseConfig";
 import {
@@ -18,7 +19,7 @@ import {
   isGoogleAuthAction,
   isTelegramTokenExpired,
 } from "../utils/localStorageUtils";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, /*useRef,*/ useState } from "react";
 import { useErrorContext, useGoogleAuthContext } from "../contexts/useContext";
 import {
   LinkToVideoFromCameraPage,
@@ -82,7 +83,7 @@ export const Login = () => {
   }
 
   return (
-    <>
+    <div className="page">
       <p>{googleAuthContext.errorMessage}</p>
       <h2>This is main page</h2>
       <div className="column">
@@ -94,9 +95,9 @@ export const Login = () => {
         <LogInWithGoogleButton />
         <LogOutFromGoogleButton />
         <hr />
-        <LinkToVideoFromCameraPage />
-        <LinkToPhotosPage />
+        <LinkToVideoFromCameraPage lastPage={BASE_ROUTE}/>
+        <LinkToPhotosPage lastPage={BASE_ROUTE} />
       </div>
-    </>
+    </div>
   );
 };

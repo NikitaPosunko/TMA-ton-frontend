@@ -5,6 +5,9 @@ export const TOKEN_LOCAL_STORAGE_KEY_TELEGRAM = "token_telegram";
 export const TOKEN_LOCAL_STORAGE_KEY_GOOGLE = "token_google";
 export const GOOGLE_AUTH_ACTION_KEY = "google_auth_action";
 
+const HISTORY_KEY = "history";
+const DELIMITER_TO_HISTORY = " ";
+
 export enum GoogleAuthAction {
   LOG_IN = "log_in",
   SIGN_UP = "sign_up",
@@ -104,3 +107,29 @@ export const isGoogleTokenExpired = () => {
 
   return true;
 };
+
+
+
+export function addToHistoryPage(newString : string) {
+  let existingString = localStorage.getItem(HISTORY_KEY);
+  if (existingString) {
+    existingString += DELIMITER_TO_HISTORY + newString;
+  } else {
+    existingString = newString;
+  }
+  localStorage.setItem(HISTORY_KEY, existingString);
+}
+
+
+export function getLastPage() {
+  const existingString = localStorage.getItem(HISTORY_KEY);
+  if (existingString) {
+    const lastDelimiterIndex = existingString.lastIndexOf(DELIMITER_TO_HISTORY);
+    if (lastDelimiterIndex === -1) {
+      return existingString;
+    } else {
+      return existingString.substring(lastDelimiterIndex + 1);
+    }
+  }
+  return null;
+}
