@@ -7,3 +7,4 @@ export const PHOTOS_ROUTE = "/photos";
 export const TEST_HOME_ROUTE = "/test-home";
 export const SUBSCRIPTION_PAGE_ROUTE = "/subscription";
 export const SUBSCRIPTION_ADMIN_PAGE_ROUTE = "/subscription-admin";
+export const SUBSCRIBER_PROTECTED_ROUTE = "/subscriber-protected-route";

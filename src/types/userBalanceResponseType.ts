@@ -1,3 +1,3 @@
 export interface UserBalanceDto {
-  tonCoinsBalance: string;
+  nanotonCoinsBalance: string;
 }

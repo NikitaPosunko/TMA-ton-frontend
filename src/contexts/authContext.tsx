@@ -30,6 +30,11 @@ import {
 import { TelegramAuthResponse } from "../telegram/types/types";
 import { backendAxios } from "../utils/axiosConfig";
 import { useTonConnectUI } from "@tonconnect/ui-react";
+import {
+  GoogleLogInRequestBody,
+  GoogleSignUpRequestBody,
+  TelegramAuthRequestBody,
+} from "../types/authRequestsTypes";
 
 // ------------------------------------------------------------------------------------ //
 
@@ -86,7 +91,7 @@ export const GoogleAuthContextProvider = ({
   }, []);
 
   //--------------------------------------  google auth backend confirmation  ------------------------------------//
-
+  // TODO FIX add initData to sign up request
   const googleAuthBackendConfirmatin = async () => {
     // verify user on backend
     setLoading(true);
@@ -100,11 +105,12 @@ export const GoogleAuthContextProvider = ({
       //------ perform login on backend --------//
       if (googleAuthAction === GoogleAuthAction.LOG_IN) {
         try {
+          const googleLogInRequestBody: GoogleLogInRequestBody = {
+            token: token,
+          };
           const response = await backendAxios.post(
             BACKEND_GOOGLE_LOG_IN_REQUEST,
-            {
-              token: token,
-            }
+            googleLogInRequestBody
           );
           if (!response.data) {
             // response doesn't have data
@@ -139,11 +145,13 @@ export const GoogleAuthContextProvider = ({
       //------ perform signup on backend --------//
       else if (googleAuthAction === GoogleAuthAction.SIGN_UP) {
         try {
+          const googleSignUpRequestBody: GoogleSignUpRequestBody = {
+            initData: rowInitData,
+            token: token,
+          };
           const response = await backendAxios.post(
             BACKEND_GOOGLE_SIGN_UP_REQUEST,
-            {
-              token: token,
-            }
+            googleSignUpRequestBody
           );
           if (!response.data) {
             // response doesn't have data
@@ -220,7 +228,7 @@ export const GoogleAuthContextProvider = ({
     // The onAuthStateChanged listener will update the isUserLoggedIn state
   };
 
-  // google log out
+  //----------------------------------- google log out -----------------------------------//
   const doLogOutFromGoogle = async () => {
     setLoading(true);
 
@@ -247,7 +255,6 @@ export const GoogleAuthContextProvider = ({
     doLogOutFromGoogle,
     doSignUpWithGoogle,
     googleAuthBackendConfirmatin,
-    //needGoogleAuthBackendConfirmation,
     errorMessage,
     clearErrorMessage,
     loading,
@@ -311,9 +318,12 @@ export const TelegramAuthContextProvider = ({
       return;
     }
 
+    const telegramAuthRequestBody: TelegramAuthRequestBody = {
+      initData: rowInitData,
+    };
     // if token is not fresh i.e. user is not logged in, do login
     backendAxios
-      .post(BACKEND_TELEGRAM_LOG_IN_REQUEST, { initData: rowInitData })
+      .post(BACKEND_TELEGRAM_LOG_IN_REQUEST, telegramAuthRequestBody)
       .then((response) => {
         setLoading(false);
         if (response?.data) {
@@ -333,7 +343,7 @@ export const TelegramAuthContextProvider = ({
       });
   };
 
-  // telegram log out
+  //------------------------------ telegram log out -----------------------------------//
   const doLogOutFromTelegram = async () => {
     clearTelegramAuthToken();
     clearUserDbId();
@@ -348,8 +358,11 @@ export const TelegramAuthContextProvider = ({
   // telegram sign up
   const doSignUpWithTelegram = async () => {
     setLoading(true);
+    const telegramAuthRequestBody: TelegramAuthRequestBody = {
+      initData: rowInitData,
+    };
     backendAxios
-      .post(BACKEND_TELEGRAM_SIGN_UP_REQUEST, { initData: rowInitData })
+      .post(BACKEND_TELEGRAM_SIGN_UP_REQUEST, telegramAuthRequestBody)
       .then((response) => {
         setLoading(false);
         if (response?.data) {

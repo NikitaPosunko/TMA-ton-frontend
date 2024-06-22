@@ -11,6 +11,7 @@ import {
   ERROR_ROUTE,
   GOOGLE_USER_ROUTE,
   PHOTOS_ROUTE,
+  SUBSCRIBER_PROTECTED_ROUTE,
   SUBSCRIPTION_ADMIN_PAGE_ROUTE,
   SUBSCRIPTION_PAGE_ROUTE,
   TELEGRAM_USER_ROUTE,
@@ -29,6 +30,7 @@ import {
   AdminProtection,
   LoginProtection,
 } from "./components/ProtectionComponents.tsx";
+import { SubscriberProtectedPage } from "./routes/SubscriberProtectedPage.tsx";
 
 // Create router
 const router = createBrowserRouter([
@@ -87,6 +89,10 @@ const router = createBrowserRouter([
             </AdminProtection>
           </LoginProtection>
         ),
+      },
+      {
+        path: SUBSCRIBER_PROTECTED_ROUTE,
+        element: <SubscriberProtectedPage />,
       },
       {
         path: "*",

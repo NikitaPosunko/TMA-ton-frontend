@@ -30,15 +30,29 @@ export const BACKEND_GOOGLE_SIGN_UP_REQUEST = `/auth/google-sign-up`;
 
 // subscription
 
-export const BACKEND_SUBSCRIPTION_PHOTOS_REQUEST = `/subscription/photos`;
+export const BACKEND_SUBSCRIPTION_PLANS_REQUEST = `/subscription/get-plans`;
 
-export const BACKEND_GET_ADMIN_CONFIG_REQUEST = `/subscription/admin-wallet`;
+export const BACKEND_SUBSCRIPTION_STATUS_REQUEST = `/subscription/get-subscription-status`;
 
-export const BACKEND_SET_ADMIN_CONFIG_REQUEST = `/subscription/set-admin-wallet`;
+export const BACKEND_MAKE_SUBSCRIPTION_REQUEST = `/subscription/make-subscription`;
 
 export const BACKEND_USER_WALLET_CONFIRMATION_REQUEST = `/subscription/user-wallet-confirmation`;
 
 export const BACKEND_USER_BALANCE_REQUEST = `/subscription/user-balance`;
+
+// subscribed user
+
+// auth guard test
+export const BACKEND_SUBSCRIPTION_PHOTOS_REQUEST = `/subscription/photos`;
+
+// subscriber guard test
+export const BACKEND_SUBSCRIBER_PROTECTED_ROUTE_REQUEST = `/subscription/subscriber-protected-route`;
+
+// subscription-admin
+
+export const BACKEND_GET_ADMIN_CONFIG_REQUEST = `/subscription/admin-wallet`;
+
+export const BACKEND_SET_ADMIN_CONFIG_REQUEST = `/subscription/set-admin-wallet`;
 
 // // ton-connect
 

@@ -5,6 +5,7 @@ import {
   PHOTOS_ROUTE,
   BASE_ROUTE,
   VIDEO_FROM_CAMERA_ROUTE,
+  SUBSCRIBER_PROTECTED_ROUTE,
 } from "../static/routes";
 
 //--------------------------------- Link to subscription page ---------------------------------//
@@ -58,6 +59,16 @@ export const LinkToVideoFromCameraPage = () => {
   return (
     <Link to={VIDEO_FROM_CAMERA_ROUTE} replace={true}>
       Go to Video From Camera Page
+    </Link>
+  );
+};
+
+//--------------------------------- Link subscriber protected page ---------------------------------//
+
+export const LinkToSubscriberProtectedPage = () => {
+  return (
+    <Link to={SUBSCRIBER_PROTECTED_ROUTE} replace={true}>
+      Only for subscribers
     </Link>
   );
 };

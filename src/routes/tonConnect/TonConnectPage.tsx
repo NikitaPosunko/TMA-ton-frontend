@@ -9,6 +9,9 @@ import { Loading } from "../../components/Components";
 import { Box, Button, Typography } from "@mui/material";
 import { backendAxios } from "../../utils/axiosConfig";
 import {
+  BACKEND_MAKE_SUBSCRIPTION_REQUEST,
+  BACKEND_SUBSCRIPTION_PLANS_REQUEST,
+  BACKEND_SUBSCRIPTION_STATUS_REQUEST,
   BACKEND_USER_BALANCE_REQUEST,
   BACKEND_USER_WALLET_CONFIRMATION_REQUEST,
 } from "../../static/url";
@@ -16,17 +19,33 @@ import { useNavigate } from "react-router-dom";
 import { useErrorContext } from "../../contexts/useContext";
 import { ERROR_ROUTE } from "../../static/routes";
 import { UserBalanceDto } from "../../types/userBalanceResponseType";
-import { LinkToLoginPage } from "../../components/Links";
+import {
+  LinkToLoginPage,
+  LinkToSubscriberProtectedPage,
+} from "../../components/Links";
+import {
+  SubscriptionPlan,
+  SubscriptionPlanArray,
+} from "../../types/subscriptionPlanType";
+import { fromNano } from "../../utils/helperFunctions";
+import {
+  SubscriptionResponseDto,
+  SubscriptionStatus,
+} from "../../types/subscriptionStatusType";
+import moment from "moment-timezone";
+
+//----------------------------------------------------------------------------------------------//
 
 export const TonConnectPage = () => {
   const [loading, setLoading] = useState(true);
   const [tonConnectUI] = useTonConnectUI();
   const connectedAddress = useTonAddress(true);
   const [userTonBalance, setUserTonBalance] = useState<string | null>(null);
-  // const [userWalletAddress, setUserWalletAddress] = useState<string | null>(
-  //   connectedAddress
-  // );
-  //const [adminWalletAddress, setAdminWalletAddress] = useState<string>("");
+  const [subscriptionPlan, setSubscriptionPlan] =
+    useState<SubscriptionPlan | null>(null);
+
+  const [subscriptionStatus, setSubscriptionStatus] =
+    useState<SubscriptionResponseDto | null>(null);
 
   ///
 
@@ -47,10 +66,8 @@ export const TonConnectPage = () => {
 
   // main part
 
-  // ------------------------------ buy subscription ------------------------------ //
-
-  const buySubscription = async () => {
-    setLoading(true);
+  // ----------------- 1. backend user wallet confirmation --- 2. make transaction ----------------------- //
+  const doUserConfirmationAndTransaction = async () => {
     try {
       // 1. backend user wallet confirmation
       const response = await backendAxios.post(
@@ -62,35 +79,42 @@ export const TonConnectPage = () => {
       console.log(response);
       const adminWalletAddress = response.data.walletFriendlyAddress;
 
-      // 2. buy subscription
-      const transaction: SendTransactionRequest = {
-        messages: [
-          {
-            address: adminWalletAddress,
-            // TODO: get amount from backend
-            amount: "20000000", //Toncoin in nanotons // 20000000 = 0.2 TON
-          },
-        ],
-        // transaction valid for 60 seconds
-        validUntil: Math.floor(Date.now() / 1000) + 360,
-      };
-      const result = await tonConnectUI.sendTransaction(transaction);
-      console.log(result);
-      setLoading(false);
+      // 2. make transaction
+      if (subscriptionPlan?.priceInNanotonCoins) {
+        const transaction: SendTransactionRequest = {
+          messages: [
+            {
+              address: adminWalletAddress,
+              amount: subscriptionPlan.priceInNanotonCoins.toString(), // in nanotons // 20000000 = 0.2 TON
+            },
+          ],
+          // transaction valid for 60 seconds
+          validUntil: Math.floor(Date.now() / 1000) + 360,
+        };
+        const result = await tonConnectUI.sendTransaction(transaction);
+        console.log(result);
+      } else {
+        setLoading(false);
+        handleError({ message: "No subscription plan" });
+      }
     } catch (error) {
       setLoading(false);
       handleError(error as { message: string });
     }
   };
 
+  // ------------------------------ get user balance ------------------------------ //
   const calculateAndGetUserBalance = async () => {
     setLoading(true);
     try {
       const response = await backendAxios.get(BACKEND_USER_BALANCE_REQUEST);
 
       const userBalanceDto: UserBalanceDto = response.data;
-      const userBalance = userBalanceDto.tonCoinsBalance;
-      setUserTonBalance(userBalance);
+      const userNanotonBalance = userBalanceDto.nanotonCoinsBalance;
+
+      // convert nanoton to TON
+      const userTonBalance = fromNano(userNanotonBalance);
+      setUserTonBalance(userTonBalance);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -98,11 +122,98 @@ export const TonConnectPage = () => {
     }
   };
 
+  //------------------------------ get subscription status ------------------------------//
+  const fetchSubscriptionStatus = useCallback(async (): Promise<
+    SubscriptionResponseDto | undefined
+  > => {
+    setLoading(true);
+    try {
+      const response = await backendAxios.get(
+        BACKEND_SUBSCRIPTION_STATUS_REQUEST
+      );
+      setSubscriptionStatus(response.data);
+      return response.data;
+    } catch (error) {
+      setLoading(false);
+      handleError(error as { message: string });
+    }
+  }, [handleError]);
+
+  // ------------------------------ make subscription ------------------------------ //
+
+  const makeSubscription = async () => {
+    try {
+      const response = await backendAxios.get(
+        BACKEND_MAKE_SUBSCRIPTION_REQUEST
+      );
+      console.log(response.data);
+      setSubscriptionStatus(response.data);
+    } catch (error) {
+      setLoading(false);
+      handleError(error as { message: string });
+    }
+  };
+
+  // ------------------------------ do full subscription process ------------------------------ //
+
+  const doFullSubscriptionProcess = async () => {
+    setLoading(true);
+    try {
+      // request if user already has subscription
+      const response = await fetchSubscriptionStatus();
+      if (!response) {
+        setLoading(false);
+        handleError({ message: "No subscription status" });
+      }
+      if (response?.status === SubscriptionStatus.ACTIVE) {
+        setLoading(false);
+        alert("You already have an active subscription");
+        return;
+      } else {
+        // 1. backend user wallet confirmation
+        // 2. make transaction
+        await doUserConfirmationAndTransaction();
+
+        // 3. make subscription reuqest
+        await makeSubscription();
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      handleError(error as { message: string });
+    }
+  };
+
+  // rendering part
+
   useEffect(() => {
-    setLoading(false);
-    // TODO fetch subscription plan data from backend
-    //------------------------------------------------//
-  }, []);
+    const fetchSubscriptionPlan = async () => {
+      setLoading(true);
+      try {
+        const response = await backendAxios.get(
+          BACKEND_SUBSCRIPTION_PLANS_REQUEST
+        );
+
+        const subscriptionPlanArray: SubscriptionPlanArray = response.data;
+
+        const subscriptionPlan: SubscriptionPlan =
+          subscriptionPlanArray.subscriptionPlans[0];
+        setSubscriptionPlan(subscriptionPlan);
+
+        //console.log(subscriptionPlan.durationInSeconds);
+      } catch (error) {
+        setLoading(false);
+        handleError(error as { message: string });
+      }
+    };
+
+    async function fetchAll() {
+      await Promise.all([fetchSubscriptionPlan(), fetchSubscriptionStatus()]);
+      setLoading(false);
+    }
+
+    fetchAll();
+  }, [fetchSubscriptionStatus, handleError]);
 
   if (loading) {
     return <Loading />;
@@ -114,26 +225,69 @@ export const TonConnectPage = () => {
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <TonConnectButton />
       </Box>
-      <Button
-        sx={{
-          mt: 2,
-          mb: 2,
-          //backgroundColor: "green",
-        }}
-        onClick={() => calculateAndGetUserBalance()}
-      >
-        Get user balance
-      </Button>
-      {userTonBalance && <Typography>{userTonBalance + " TON"}</Typography>}
+      <div className="column">
+        <LinkToSubscriberProtectedPage />
+        <Button
+          sx={{
+            mt: 2,
+            mb: 2,
+          }}
+          onClick={() => calculateAndGetUserBalance()}
+        >
+          Get user balance
+        </Button>
+        {userTonBalance && <Typography>{userTonBalance + " TON"}</Typography>}
+      </div>
       {connectedAddress && (
         <>
           <Typography variant="body1">Wallet: {connectedAddress}</Typography>
+          <hr />
+          {subscriptionStatus && (
+            <>
+              <Typography variant="body1">
+                Subscription status: {subscriptionStatus.status}
+              </Typography>
+              {subscriptionStatus.endDate && (
+                <p>
+                  End date:{" "}
+                  {moment(subscriptionStatus.endDate)
+                    .tz("Europe/Kiev")
+                    .format("YYYY-MM-DD HH:mm:ss")}
+                </p>
+              )}
+            </>
+          )}
+          <hr />
+          {subscriptionPlan && (
+            <>
+              <Typography variant="body1">
+                Subscription plan: {subscriptionPlan.title}
+              </Typography>
+              <p>{subscriptionPlan.description}</p>
+              {/* convert nanoton to TON and round to 2 decimal places */}
+              <p>
+                {"Price: " +
+                  fromNano(subscriptionPlan.priceInNanotonCoins) +
+                  " TON"}
+              </p>
+              <p>
+                {"Duration: " +
+                  Math.floor(
+                    subscriptionPlan.durationInSeconds / 60
+                  ).toString() +
+                  " min"}
+              </p>
+            </>
+          )}
+          <hr />
           <Button
             onClick={() => {
-              buySubscription();
+              doFullSubscriptionProcess();
             }}
+            variant="contained"
+            color="success"
           >
-            buy subscription --- Send transaction
+            buy subscription
           </Button>
         </>
       )}

@@ -18,11 +18,12 @@ import {
   isGoogleAuthAction,
   isTelegramTokenExpired,
 } from "../utils/localStorageUtils";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useErrorContext, useGoogleAuthContext } from "../contexts/useContext";
 import {
   LinkToVideoFromCameraPage,
   LinkToPhotosPage,
+  LinkToSubscriberProtectedPage,
 } from "../components/Links";
 
 export const Login = () => {
@@ -96,6 +97,7 @@ export const Login = () => {
         <hr />
         <LinkToVideoFromCameraPage />
         <LinkToPhotosPage />
+        <LinkToSubscriberProtectedPage />
       </div>
     </>
   );
