@@ -55,11 +55,10 @@ export const Login = () => {
 
   useEffect(() => {
     if (googleAuthContext.errorMessage !== null) {
-      googleAuthContext.clearErrorMessage();
-
       googleAuthContext.doLogOutFromGoogle().then(() => {
         errorContext.setError(googleAuthContext.errorMessage);
         console.log(errorContext.errorMessage);
+        googleAuthContext.clearErrorMessage();
       });
     }
   }, [errorContext, googleAuthContext]);

@@ -312,11 +312,11 @@ export const TelegramAuthContextProvider = ({
     // loading indicator
     setLoading(true);
 
-    if (isTelegramTokenExpired() === false) {
-      // if token is fresh i.e. user is logged in, don't do anything
-      setLoading(false);
-      return;
-    }
+    // if (isTelegramTokenExpired() === false) {
+    //   // if token is fresh i.e. user is logged in, don't do anything
+    //   setLoading(false);
+    //   return;
+    // }
 
     const telegramAuthRequestBody: TelegramAuthRequestBody = {
       initData: rowInitData,
@@ -339,6 +339,7 @@ export const TelegramAuthContextProvider = ({
         }
       })
       .catch((error) => {
+        setLoading(false);
         handleError(error);
       });
   };

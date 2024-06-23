@@ -2,7 +2,7 @@ import {
   useErrorContext,
   useTelegramAuthContext,
 } from "../contexts/useContext";
-import { LogOutFromTelegramButton } from "../components/Components";
+import { Loading, LogOutFromTelegramButton } from "../components/Components";
 import { useNavigate } from "react-router-dom";
 import { ERROR_ROUTE } from "../static/routes";
 import {
@@ -10,23 +10,58 @@ import {
   LinkToPhotosPage,
   LinkToSubscriptionPage,
 } from "../components/Links";
-import { TonConnectPage } from "./tonConnect/TonConnectPage";
+import { useCallback, useEffect, useState } from "react";
 
 export function TelegramLoggedInUser() {
+  const [loading, setLoading] = useState(true);
   const telegramAuthContext = useTelegramAuthContext();
-  const userInfo = telegramAuthContext.authResponse?.authData?.user;
+  //const userInfo = telegramAuthContext.authResponse?.authData?.user;
+
+  const [userInfo, setUserInfo] = useState<WebAppUser | undefined>(
+    telegramAuthContext.authResponse?.authData?.user
+  );
 
   const errorContext = useErrorContext();
   const navigate = useNavigate();
 
-  const handleError = (error: { message: string }) => {
-    errorContext.setError(error.message);
-    navigate(ERROR_ROUTE, { replace: true });
-  };
+  const handleError = useCallback(
+    (error: { message: string }) => {
+      errorContext.setError(error.message);
+      navigate(ERROR_ROUTE, { replace: true });
+    },
+    [errorContext, navigate]
+  );
+
+  useEffect(() => {
+    // if user was logged in before closing mini app
+    // then refetch telegram user info
+    async function refreshTelegramUserInfo() {
+      if (!userInfo) {
+        try {
+          await telegramAuthContext.doLogInWithTelegram();
+          setUserInfo(telegramAuthContext.authResponse?.authData?.user);
+          setLoading(false);
+        } catch (error) {
+          setLoading(false);
+          handleError({ message: (error as Error).message });
+        }
+      } else {
+        setLoading(false);
+      }
+    }
+
+    refreshTelegramUserInfo();
+
+    //setLoading(false);
+  });
+
+  if (loading) {
+    return <Loading />;
+  }
 
   if (!userInfo) {
     telegramAuthContext.doLogOutFromTelegram();
-    handleError({ message: `${JSON.stringify(userInfo)}` });
+    handleError({ message: `no telegram user info` });
   } else {
     return (
       <>
