@@ -12,7 +12,7 @@ import {
 } from "../components/Links";
 import { TELEGRAM_USER_ROUTE } from "../static/routes";
 import { webApp } from "../telegram/webApp";
-//import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export function TelegramLoggedInUser() {
   const [loading, setLoading] = useState(true);

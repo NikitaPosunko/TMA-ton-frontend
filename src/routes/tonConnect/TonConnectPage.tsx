@@ -13,8 +13,8 @@ import {
   BACKEND_MAKE_SUBSCRIPTION_REQUEST,
   BACKEND_SUBSCRIPTION_PLANS_REQUEST,
   BACKEND_SUBSCRIPTION_STATUS_REQUEST,
-BACKEND_USER_BALANCE_REQUEST,
-BACKEND_USER_WALLET_CONFIRMATION_REQUEST,
+  BACKEND_USER_BALANCE_REQUEST,
+  BACKEND_USER_WALLET_CONFIRMATION_REQUEST,
 } from "../../static/url";
 import { useNavigate } from "react-router-dom";
 import { useErrorContext } from "../../contexts/useContext";
@@ -22,7 +22,7 @@ import { ERROR_ROUTE } from "../../static/routes";
 import { UserBalanceDto } from "../../types/userBalanceResponseType";
 import {
   LinkToLoginPage,
-  LinkToSubscriberProtectedPage,
+  //LinkToSubscriberProtectedPage,
 } from "../../components/Links";
 import { webApp } from "../../telegram/webApp";
 import { getLastPage } from "../../utils/localStorageUtils";
@@ -72,67 +72,12 @@ export const TonConnectPage = () => {
 
   // main part
 
-  // ----------------- 1. backend user wallet confirmation ------------------------- //
-  // ----------------- 2. get active admin config ---------------------------------- //
-  // ----------------- 3. make transaction ----------------------------------------- //
-  const doUserConfirmationAndTransaction = async () => {
-    try {
-      // 1. backend user wallet confirmation
-      const userWalletConfirmationResponse = await backendAxios.post(
-        BACKEND_USER_WALLET_CONFIRMATION_REQUEST,
-        {
-          wallet: connectedAddress,
-        }
-      );
-      const userWalletConfirmation: UserWalletConfirmationResponseDto =
-        userWalletConfirmationResponse.data;
-
-      // handle response if wallet is already owned by someone
-      if (userWalletConfirmation.isWalletOwnedBySomeone) {
-        handleError({
-          message: "Wallet is owned by another user. Try another wallet.",
-        });
-        return;
-      }
-
-      // 2. get active admin config
-      const activeAdminConfigResponse = await backendAxios.get(
-        BACKEND_GET_ACTIVE_ADMIN_CONFIG_REQUEST
-      );
-      const activeAdminConfig: AdminConfigResponseDto =
-        activeAdminConfigResponse.data;
-      const adminWalletAddress = activeAdminConfig.walletFriendlyAddress;
-
-      // 3. make transaction
-      if (subscriptionPlan?.priceInNanotonCoins) {
-        const transaction: SendTransactionRequest = {
-          messages: [
-            {
-              address: adminWalletAddress,
-              amount: subscriptionPlan.priceInNanotonCoins.toString(), // in nanotons // 20000000 = 0.2 TON
-            },
-          ],
-          // transaction valid for 60 seconds
-          validUntil: Math.floor(Date.now() / 1000) + 360,
-        };
-        const result = await tonConnectUI.sendTransaction(transaction);
-        console.log(result);
-      } else {
-        setLoading(false);
-        handleError({ message: "No subscription plan" });
-      }
-    } catch (error) {
-      setLoading(false);
-      handleError(error as { message: string });
-    }
-  };
-
   // ------------------------------ get user balance ------------------------------ //
   const calculateAndGetUserBalance = async () => {
     setLoading(true);
     try {
       const response = await backendAxios.get(BACKEND_USER_BALANCE_REQUEST);
-    
+
       const userBalanceDto: UserBalanceDto = response.data;
       const userNanotonBalance = userBalanceDto.nanotonCoinsBalance;
 
@@ -162,51 +107,6 @@ export const TonConnectPage = () => {
       handleError(error as { message: string });
     }
   }, [handleError]);
-
-  // ------------------------------ make subscription ------------------------------ //
-
-  const makeSubscription = async () => {
-    try {
-      const response = await backendAxios.get(
-        BACKEND_MAKE_SUBSCRIPTION_REQUEST
-      );
-      console.log(response.data);
-      setSubscriptionStatus(response.data);
-    } catch (error) {
-      setLoading(false);
-      handleError(error as { message: string });
-    }
-  };
-
-  // ------------------------------ do full subscription process ------------------------------ //
-
-  const doFullSubscriptionProcess = async () => {
-    setLoading(true);
-    try {
-      // request if user already has subscription
-      const response = await fetchSubscriptionStatus();
-      if (!response) {
-        setLoading(false);
-        handleError({ message: "No subscription status" });
-      }
-      if (response?.status === SubscriptionStatus.ACTIVE) {
-        setLoading(false);
-        alert("You already have an active subscription");
-        return;
-      } else {
-        // 1. backend user wallet confirmation
-        // 2. make transaction
-        await doUserConfirmationAndTransaction();
-
-        // 3. make subscription reuqest
-        await makeSubscription();
-      }
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      handleError(error as { message: string });
-    }
-  };
 
   // rendering part
 
@@ -239,16 +139,118 @@ export const TonConnectPage = () => {
     fetchAll();
   }, [fetchSubscriptionStatus, handleError]);
 
-
   //Mini apps buttons setting
   useEffect(() => {
+    // ----------------- 1. backend user wallet confirmation ------------------------- //
+    // ----------------- 2. get active admin config ---------------------------------- //
+    // ----------------- 3. make transaction ----------------------------------------- //
+    const doUserConfirmationAndTransaction = async () => {
+      try {
+        // 1. backend user wallet confirmation
+        const userWalletConfirmationResponse = await backendAxios.post(
+          BACKEND_USER_WALLET_CONFIRMATION_REQUEST,
+          {
+            wallet: connectedAddress,
+          }
+        );
+        const userWalletConfirmation: UserWalletConfirmationResponseDto =
+          userWalletConfirmationResponse.data;
+
+        // handle response if wallet is already owned by someone
+        if (userWalletConfirmation.isWalletOwnedBySomeone) {
+          handleError({
+            message: "Wallet is owned by another user. Try another wallet.",
+          });
+          return;
+        }
+
+        // 2. get active admin config
+        const activeAdminConfigResponse = await backendAxios.get(
+          BACKEND_GET_ACTIVE_ADMIN_CONFIG_REQUEST
+        );
+        const activeAdminConfig: AdminConfigResponseDto =
+          activeAdminConfigResponse.data;
+        const adminWalletAddress = activeAdminConfig.walletFriendlyAddress;
+
+        // 3. make transaction
+        if (subscriptionPlan?.priceInNanotonCoins) {
+          const transaction: SendTransactionRequest = {
+            messages: [
+              {
+                address: adminWalletAddress,
+                amount: subscriptionPlan.priceInNanotonCoins.toString(), // in nanotons // 20000000 = 0.2 TON
+              },
+            ],
+            // transaction valid for 60 seconds
+            validUntil: Math.floor(Date.now() / 1000) + 360,
+          };
+          const result = await tonConnectUI.sendTransaction(transaction);
+          console.log(result);
+        } else {
+          setLoading(false);
+          handleError({ message: "No subscription plan" });
+        }
+      } catch (error) {
+        setLoading(false);
+        handleError(error as { message: string });
+      }
+    };
+
+    // ------------------------------ make subscription ------------------------------ //
+
+    const makeSubscription = async () => {
+      try {
+        const response = await backendAxios.get(
+          BACKEND_MAKE_SUBSCRIPTION_REQUEST
+        );
+        console.log(response.data);
+        setSubscriptionStatus(response.data);
+      } catch (error) {
+        setLoading(false);
+        handleError(error as { message: string });
+      }
+    };
+
+    // ------------------------------ do full subscription process ------------------------------ //
+
+    const doFullSubscriptionProcess = async () => {
+      setLoading(true);
+      try {
+        // request if user already has subscription
+        const response = await fetchSubscriptionStatus();
+        if (!response) {
+          setLoading(false);
+          handleError({ message: "No subscription status" });
+        }
+        if (response?.status === SubscriptionStatus.ACTIVE) {
+          setLoading(false);
+          alert("You already have an active subscription");
+          return;
+        } else {
+          // 1. backend user wallet confirmation
+          // 2. make transaction
+          await doUserConfirmationAndTransaction();
+
+          // 3. make subscription reuqest
+          await makeSubscription();
+        }
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        handleError(error as { message: string });
+      }
+    };
+
+    // ------------------------------ main button click ------------------------------ //
+
     function mainButtonClick() {
-      buySubscription();
+      doFullSubscriptionProcess();
+      //buySubscription();
     }
 
     function backButtonClick() {
       const page = getLastPage();
-      navigate(page === null ? "/" : page, {replace: true});
+      navigate(page === null ? "/" : page, { replace: true });
     }
 
     if (webApp !== null) {
@@ -269,9 +271,15 @@ export const TonConnectPage = () => {
 
       webApp?.BackButton.offClick(backButtonClick);
       webApp?.BackButton.hide();
-    }
-  }, [webApp]);
-
+    };
+  }, [
+    connectedAddress,
+    fetchSubscriptionStatus,
+    handleError,
+    navigate,
+    subscriptionPlan,
+    tonConnectUI,
+  ]);
 
   if (loading) {
     return <Loading />;
@@ -293,10 +301,10 @@ export const TonConnectPage = () => {
           color: "var(--tg-theme-button-text-color)",
           borderColor: "var(--tg-theme-button-color)",
           p: 2, // Add padding for spacing
-          '&:hover': {
+          "&:hover": {
             backgroundColor: "var(--tg-theme-secondary-bg-color)",
             borderColor: "var(--tg-theme-link-color)",
-            opacity: "0.7"
+            opacity: "0.7",
           },
         }}
         onClick={() => calculateAndGetUserBalance()}
@@ -345,18 +353,17 @@ export const TonConnectPage = () => {
               </p>
             </>
           )}
-          <hr />
+          {/* <hr />
           <Button
             variant="outlined"
             onClick={() => {
               doFullSubscriptionProcess();
             }}
-            variant="contained"
+            //variant="contained"
             color="success"
           >
             buy subscription
-          </Button>
-          */}
+          </Button> */}
         </>
       )}
     </div>
