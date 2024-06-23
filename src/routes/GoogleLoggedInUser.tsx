@@ -5,6 +5,8 @@ import {
   LinkToVideoFromCameraPage,
   LinkToPhotosPage,
 } from "../components/Links";
+import { webApp } from "../telegram/webApp";
+import { GOOGLE_USER_ROUTE } from "../static/routes";
 
 export function GoogleLoggedInUser() {
   //const [loading, setLoading] = useState(true);
@@ -28,25 +30,27 @@ export function GoogleLoggedInUser() {
 
   console.log(auth.currentUser);
 
+  webApp?.BackButton.hide();
+
   //if (loading) return <Loading />;
 
   return (
-    <div>
+    <div className="page">
       <h2>GoogleLoggedInUser</h2>
       {currentUser ? (
         <>
           <h2>user: {currentUser.displayName}</h2>
           <hr />
 
-          <LinkToSubscriptionPage />
+          <LinkToSubscriptionPage lastPage={GOOGLE_USER_ROUTE} />
           <hr />
           <p>{currentUser.email}</p>
           <img src={currentUser.photoURL ?? ""} alt="user photo" />
           <hr />
           <div className="column">
             <LogOutFromGoogleButton />
-            <LinkToVideoFromCameraPage />
-            <LinkToPhotosPage />
+            <LinkToVideoFromCameraPage lastPage={GOOGLE_USER_ROUTE}/>
+            <LinkToPhotosPage lastPage={GOOGLE_USER_ROUTE} />
           </div>
         </>
       ) : (

@@ -10,7 +10,9 @@ import {
   LinkToPhotosPage,
   LinkToSubscriptionPage,
 } from "../components/Links";
-import { useCallback, useEffect, useState } from "react";
+import { TELEGRAM_USER_ROUTE } from "../static/routes";
+import { webApp } from "../telegram/webApp";
+//import { useCallback, useEffect, useState } from "react";
 
 export function TelegramLoggedInUser() {
   const [loading, setLoading] = useState(true);
@@ -59,26 +61,23 @@ export function TelegramLoggedInUser() {
     return <Loading />;
   }
 
+  webApp?.BackButton.hide();
+
   if (!userInfo) {
     telegramAuthContext.doLogOutFromTelegram();
     handleError({ message: `no telegram user info` });
   } else {
     return (
-      <>
+      <div className="page">
         <h2>User Page</h2>
         <p>User authenticated</p>
         <hr />
         <div className="column">
-          <LinkToSubscriptionPage />
-          <LogOutFromTelegramButton />
-          <LinkToVideoFromCameraPage />
-          <LinkToPhotosPage />
+          <LinkToSubscriptionPage lastPage={TELEGRAM_USER_ROUTE}/>
         </div>
         <hr />
         <h2>Telegram User Info:</h2>
 
-        <p>User ID: {userInfo.id}</p>
-        <p>User First Name: {userInfo.first_name}</p>
         {userInfo.last_name && <p>User Last Name: {userInfo.last_name}</p>}
         {userInfo.username && <p>User Username: {userInfo.username}</p>}
         {userInfo.language_code && (
@@ -99,7 +98,12 @@ export function TelegramLoggedInUser() {
         <p>
           User Allows Write To PM: {userInfo.allows_write_to_pm ? "Yes" : "No"}
         </p>
-      </>
+        <div style={{width: "68vw"}}>
+          <LinkToVideoFromCameraPage lastPage={TELEGRAM_USER_ROUTE} />
+          <LinkToPhotosPage lastPage={TELEGRAM_USER_ROUTE} />
+          <LogOutFromTelegramButton />
+        </div>
+      </div>
     );
   }
 }

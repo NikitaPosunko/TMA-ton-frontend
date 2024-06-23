@@ -13,8 +13,8 @@ import {
   BACKEND_MAKE_SUBSCRIPTION_REQUEST,
   BACKEND_SUBSCRIPTION_PLANS_REQUEST,
   BACKEND_SUBSCRIPTION_STATUS_REQUEST,
-  BACKEND_USER_BALANCE_REQUEST,
-  BACKEND_USER_WALLET_CONFIRMATION_REQUEST,
+BACKEND_USER_BALANCE_REQUEST,
+BACKEND_USER_WALLET_CONFIRMATION_REQUEST,
 } from "../../static/url";
 import { useNavigate } from "react-router-dom";
 import { useErrorContext } from "../../contexts/useContext";
@@ -24,6 +24,9 @@ import {
   LinkToLoginPage,
   LinkToSubscriberProtectedPage,
 } from "../../components/Links";
+import { webApp } from "../../telegram/webApp";
+import { getLastPage } from "../../utils/localStorageUtils";
+
 import {
   SubscriptionPlan,
   SubscriptionPlanArray,
@@ -129,7 +132,7 @@ export const TonConnectPage = () => {
     setLoading(true);
     try {
       const response = await backendAxios.get(BACKEND_USER_BALANCE_REQUEST);
-
+    
       const userBalanceDto: UserBalanceDto = response.data;
       const userNanotonBalance = userBalanceDto.nanotonCoinsBalance;
 
@@ -236,29 +239,71 @@ export const TonConnectPage = () => {
     fetchAll();
   }, [fetchSubscriptionStatus, handleError]);
 
+
+  //Mini apps buttons setting
+  useEffect(() => {
+    function mainButtonClick() {
+      buySubscription();
+    }
+
+    function backButtonClick() {
+      const page = getLastPage();
+      navigate(page === null ? "/" : page, {replace: true});
+    }
+
+    if (webApp !== null) {
+      const MainButton = webApp.MainButton;
+      const BackButton = webApp.BackButton;
+
+      MainButton.show();
+      MainButton.setText("Buy subscription --- Send transaction");
+      MainButton.onClick(mainButtonClick);
+
+      BackButton.show();
+      BackButton.onClick(backButtonClick);
+    }
+
+    return () => {
+      webApp?.MainButton.offClick(mainButtonClick);
+      webApp?.MainButton.hide();
+
+      webApp?.BackButton.offClick(backButtonClick);
+      webApp?.BackButton.hide();
+    }
+  }, [webApp]);
+
+
   if (loading) {
     return <Loading />;
   }
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <div className="page">
       <LinkToLoginPage />
+      <br />
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <TonConnectButton />
       </Box>
-      <div className="column">
-        <LinkToSubscriberProtectedPage />
-        <Button
-          sx={{
-            mt: 2,
-            mb: 2,
-          }}
-          onClick={() => calculateAndGetUserBalance()}
-        >
-          Get user balance
-        </Button>
-        {userTonBalance && <Typography>{userTonBalance + " TON"}</Typography>}
-      </div>
+      <Button
+        variant="outlined"
+        sx={{
+          mt: 2,
+          mb: 2,
+          backgroundColor: "var(--tg-theme-section-bg-color)",
+          color: "var(--tg-theme-button-text-color)",
+          borderColor: "var(--tg-theme-button-color)",
+          p: 2, // Add padding for spacing
+          '&:hover': {
+            backgroundColor: "var(--tg-theme-secondary-bg-color)",
+            borderColor: "var(--tg-theme-link-color)",
+            opacity: "0.7"
+          },
+        }}
+        onClick={() => calculateAndGetUserBalance()}
+      >
+        Get user balance
+      </Button>
+      {userTonBalance && <Typography>{userTonBalance + " TON"}</Typography>}
       {connectedAddress && (
         <>
           <Typography variant="body1">Wallet: {connectedAddress}</Typography>
@@ -302,6 +347,7 @@ export const TonConnectPage = () => {
           )}
           <hr />
           <Button
+            variant="outlined"
             onClick={() => {
               doFullSubscriptionProcess();
             }}
@@ -310,8 +356,9 @@ export const TonConnectPage = () => {
           >
             buy subscription
           </Button>
+          */}
         </>
       )}
-    </Box>
+    </div>
   );
 };

@@ -17,7 +17,9 @@ import {
   TELEGRAM_USER_ROUTE,
   TEST_HOME_ROUTE,
   VIDEO_FROM_CAMERA_ROUTE,
+  TEMP
 } from "./static/routes.tsx";
+
 import { Login } from "./routes/Login.tsx";
 
 import { ErrorPageWithMessage } from "./components/error/ErrorPageWithMessage.tsx";
@@ -26,6 +28,7 @@ import { Photos } from "./routes/Photos.tsx";
 import { AuthPage } from "./routes/AuthPage.tsx";
 import { TonConnectPage } from "./routes/tonConnect/TonConnectPage.tsx";
 import { SubscriptionAdminPage } from "./routes/SubscriptionAdminPage.tsx";
+import Temp from "./routes/Temp.tsx";
 import {
   AdminProtection,
   LoginProtection,
@@ -35,7 +38,7 @@ import { SubscriberProtectedPage } from "./routes/SubscriberProtectedPage.tsx";
 // Create router
 const router = createBrowserRouter([
   {
-    path: BASE_ROUTE,
+    path: TEMP,
     element: <App />,
     errorElement: <RouterErrorPage />,
     children: [
@@ -44,8 +47,11 @@ const router = createBrowserRouter([
         element: <ErrorPageWithMessage />,
       },
       {
-        //path: LOGIN_ROUTE,
         index: true,
+        element: <Temp />,
+      },
+      {
+        path: BASE_ROUTE,
         element: <Login />,
       },
       {

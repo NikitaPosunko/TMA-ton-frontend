@@ -11,6 +11,7 @@ import {
   ERROR_ROUTE,
   GOOGLE_USER_ROUTE,
   TELEGRAM_USER_ROUTE,
+  BASE_ROUTE
 } from "../static/routes";
 import { auth } from "../firebase/firebaseConfig";
 import {
@@ -82,7 +83,7 @@ export const Login = () => {
   }
 
   return (
-    <>
+    <div className="page">
       <p>{googleAuthContext.errorMessage}</p>
       <h2>This is main page</h2>
       <div className="column">
@@ -94,10 +95,10 @@ export const Login = () => {
         <LogInWithGoogleButton />
         <LogOutFromGoogleButton />
         <hr />
-        <LinkToVideoFromCameraPage />
-        <LinkToPhotosPage />
+        <LinkToVideoFromCameraPage lastPage={BASE_ROUTE}/>
+        <LinkToPhotosPage lastPage={BASE_ROUTE} />
         <LinkToSubscriberProtectedPage />
       </div>
-    </>
+    </div>
   );
 };
