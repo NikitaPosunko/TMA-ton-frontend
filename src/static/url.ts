@@ -34,9 +34,11 @@ export const BACKEND_SUBSCRIPTION_PLANS_REQUEST = `/subscription/get-plans`;
 
 export const BACKEND_SUBSCRIPTION_STATUS_REQUEST = `/subscription/get-subscription-status`;
 
-export const BACKEND_MAKE_SUBSCRIPTION_REQUEST = `/subscription/make-subscription`;
-
 export const BACKEND_USER_WALLET_CONFIRMATION_REQUEST = `/subscription/user-wallet-confirmation`;
+
+export const BACKEND_GET_ACTIVE_ADMIN_CONFIG_REQUEST = `/subscription/active-admin-config`;
+
+export const BACKEND_MAKE_SUBSCRIPTION_REQUEST = `/subscription/make-subscription`;
 
 export const BACKEND_USER_BALANCE_REQUEST = `/subscription/user-balance`;
 

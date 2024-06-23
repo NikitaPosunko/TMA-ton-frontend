@@ -9,6 +9,7 @@ import { Loading } from "../../components/Components";
 import { Box, Button, Typography } from "@mui/material";
 import { backendAxios } from "../../utils/axiosConfig";
 import {
+  BACKEND_GET_ACTIVE_ADMIN_CONFIG_REQUEST,
   BACKEND_MAKE_SUBSCRIPTION_REQUEST,
   BACKEND_SUBSCRIPTION_PLANS_REQUEST,
   BACKEND_SUBSCRIPTION_STATUS_REQUEST,
@@ -33,6 +34,8 @@ import {
   SubscriptionStatus,
 } from "../../types/subscriptionStatusType";
 import moment from "moment-timezone";
+import { UserWalletConfirmationResponseDto } from "../../types/userWalletConfirmationType";
+import { AdminConfigResponseDto } from "../../types/adminConfigTypes";
 
 //----------------------------------------------------------------------------------------------//
 
@@ -66,20 +69,38 @@ export const TonConnectPage = () => {
 
   // main part
 
-  // ----------------- 1. backend user wallet confirmation --- 2. make transaction ----------------------- //
+  // ----------------- 1. backend user wallet confirmation ------------------------- //
+  // ----------------- 2. get active admin config ---------------------------------- //
+  // ----------------- 3. make transaction ----------------------------------------- //
   const doUserConfirmationAndTransaction = async () => {
     try {
       // 1. backend user wallet confirmation
-      const response = await backendAxios.post(
+      const userWalletConfirmationResponse = await backendAxios.post(
         BACKEND_USER_WALLET_CONFIRMATION_REQUEST,
         {
           wallet: connectedAddress,
         }
       );
-      console.log(response);
-      const adminWalletAddress = response.data.walletFriendlyAddress;
+      const userWalletConfirmation: UserWalletConfirmationResponseDto =
+        userWalletConfirmationResponse.data;
 
-      // 2. make transaction
+      // handle response if wallet is already owned by someone
+      if (userWalletConfirmation.isWalletOwnedBySomeone) {
+        handleError({
+          message: "Wallet is owned by another user. Try another wallet.",
+        });
+        return;
+      }
+
+      // 2. get active admin config
+      const activeAdminConfigResponse = await backendAxios.get(
+        BACKEND_GET_ACTIVE_ADMIN_CONFIG_REQUEST
+      );
+      const activeAdminConfig: AdminConfigResponseDto =
+        activeAdminConfigResponse.data;
+      const adminWalletAddress = activeAdminConfig.walletFriendlyAddress;
+
+      // 3. make transaction
       if (subscriptionPlan?.priceInNanotonCoins) {
         const transaction: SendTransactionRequest = {
           messages: [
