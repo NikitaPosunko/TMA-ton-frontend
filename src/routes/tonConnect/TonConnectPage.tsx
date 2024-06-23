@@ -158,7 +158,7 @@ export const TonConnectPage = () => {
           mt: 2,
           mb: 2,
           backgroundColor: "var(--tg-theme-section-bg-color)",
-          color: "var(--tg-theme-button-text-color)",
+          color: "var(--tg-theme-text-color)",
           borderColor: "var(--tg-theme-button-color)",
           p: 2, // Add padding for spacing
           '&:hover': {
@@ -185,7 +185,7 @@ export const TonConnectPage = () => {
               mt: 2,
               mb: 2,
               backgroundColor: "var(--tg-theme-section-bg-color)",
-              color: "var(--tg-theme-button-text-color)",
+              color: "var(--tg-theme-text-color)",
               borderColor: "var(--tg-theme-button-color)",
               p: 2, // Add padding for spacing
               '&:hover': {
