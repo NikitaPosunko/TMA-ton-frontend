@@ -298,7 +298,7 @@ export const TonConnectPage = () => {
           mt: 2,
           mb: 2,
           backgroundColor: "var(--tg-theme-section-bg-color)",
-          color: "var(--tg-theme-button-text-color)",
+          color: "var(--tg-theme-text-color)",
           borderColor: "var(--tg-theme-button-color)",
           p: 2, // Add padding for spacing
           "&:hover": {
@@ -359,8 +359,19 @@ export const TonConnectPage = () => {
             onClick={() => {
               doFullSubscriptionProcess();
             }}
-            //variant="contained"
-            color="success"
+            sx={{
+              mt: 2,
+              mb: 2,
+              backgroundColor: "var(--tg-theme-section-bg-color)",
+              color: "var(--tg-theme-text-color)",
+              borderColor: "var(--tg-theme-button-color)",
+              p: 2, // Add padding for spacing
+              '&:hover': {
+                backgroundColor: "var(--tg-theme-secondary-bg-color)",
+                borderColor: "var(--tg-theme-link-color)",
+                opacity: "0.7"
+              },
+            }}
           >
             buy subscription
           </Button> */}

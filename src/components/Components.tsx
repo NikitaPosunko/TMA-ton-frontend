@@ -38,7 +38,7 @@ export const AuthButton = ({
       sx={{
         mt: 2,
         backgroundColor: "var(--tg-theme-section-bg-color)",
-        color: "var(--tg-theme-button-text-color)",
+        color: "var(--tg-theme-text-color)",
         width: "100%",
         borderColor: "var(--tg-theme-button-color)",
         //
