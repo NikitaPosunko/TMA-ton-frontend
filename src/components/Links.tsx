@@ -14,14 +14,15 @@ import {
 import { addToHistoryPage } from "../utils/localStorageUtils";
 import React from "react";
 
-
 interface LastPageProps {
   lastPage: string;
 }
 
 //--------------------------------- Link to subscription page ---------------------------------//
 
-export const LinkToSubscriptionPage : React.FC<LastPageProps>  = ({lastPage}) => {
+export const LinkToSubscriptionPage: React.FC<LastPageProps> = ({
+  lastPage,
+}) => {
   const navigate = useNavigate();
   const errorContext = useErrorContext();
   return (
@@ -39,7 +40,7 @@ export const LinkToSubscriptionPage : React.FC<LastPageProps>  = ({lastPage}) =>
 
 //--------------------------------- Link to Photoes Page ---------------------------------//
 
-export const LinkToPhotosPage : React.FC<LastPageProps>  = ({lastPage}) => {
+export const LinkToPhotosPage: React.FC<LastPageProps> = ({ lastPage }) => {
   const navigate = useNavigate();
   const errorContext = useErrorContext();
 
@@ -55,7 +56,6 @@ export const LinkToPhotosPage : React.FC<LastPageProps>  = ({lastPage}) => {
     </button>
   );
 };
-
 
 //--------------------------------- Link to Login Page ---------------------------------//
 
@@ -93,7 +93,9 @@ export const GoToBasePageAndClearErrorContext = () => {
 
 //--------------------------------- Link to Video From Camera Page ---------------------------------//
 
-export const LinkToVideoFromCameraPage : React.FC<LastPageProps>  = ({lastPage}) => {
+export const LinkToVideoFromCameraPage: React.FC<LastPageProps> = ({
+  lastPage,
+}) => {
   const navigate = useNavigate();
   const errorContext = useErrorContext();
   return (
@@ -108,8 +110,6 @@ export const LinkToVideoFromCameraPage : React.FC<LastPageProps>  = ({lastPage})
     </button>
   );
 };
-
-
 
 export const LinkToTelegramUserPage = () => {
   const navigate = useNavigate();
@@ -126,8 +126,6 @@ export const LinkToTelegramUserPage = () => {
   );
 };
 
-
-
 export const LinkToGoogleUserPage = () => {
   const navigate = useNavigate();
   const errorContext = useErrorContext();
@@ -142,8 +140,6 @@ export const LinkToGoogleUserPage = () => {
     </button>
   );
 };
-
-
 
 export const LinkToErrorPage = () => {
   const navigate = useNavigate();
@@ -160,9 +156,9 @@ export const LinkToErrorPage = () => {
   );
 };
 
-
-
-export const LinkToSubscriptionAdminPage : React.FC<LastPageProps>  = ({lastPage}) => {
+export const LinkToSubscriptionAdminPage: React.FC<LastPageProps> = ({
+  lastPage,
+}) => {
   const navigate = useNavigate();
   const errorContext = useErrorContext();
   return (
@@ -177,8 +173,26 @@ export const LinkToSubscriptionAdminPage : React.FC<LastPageProps>  = ({lastPage
     </button>
   );
 };
+
 //--------------------------------- Link subscriber protected page ---------------------------------//
 
+// export const LinkToSubscriberProtectedPage: React.FC<LastPageProps> = ({
+//   lastPage,
+// }) => {
+//   const navigate = useNavigate();
+//   const errorContext = useErrorContext();
+//   return (
+//     <button
+//       onClick={() => {
+//         addToHistoryPage(lastPage);
+//         errorContext.setError(null);
+//         navigate(SUBSCRIBER_PROTECTED_ROUTE, { replace: true });
+//       }}
+//     >
+//       Only for subscribers
+//     </button>
+//   );
+// };
 export const LinkToSubscriberProtectedPage = () => {
   return (
     <Link to={SUBSCRIBER_PROTECTED_ROUTE} replace={true}>

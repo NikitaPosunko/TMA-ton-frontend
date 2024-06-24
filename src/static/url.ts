@@ -57,6 +57,6 @@ export const BACKEND_GET_ADMIN_CONFIG_REQUEST = `/subscription/admin-wallet`;
 
 export const BACKEND_SET_ADMIN_CONFIG_REQUEST = `/subscription/set-admin-wallet`;
 
-// // ton-connect
+// photo
 
-// export const BACKEND_TON_CONNECT_CONNECT_REQUEST = `${BACKEND_BASE_URL}/ton-connect/connect`;
+export const BACKEND_UPLOAD_IMAGE_REQUEST = `/bot/upload-image`;

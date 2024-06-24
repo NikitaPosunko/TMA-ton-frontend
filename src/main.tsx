@@ -17,7 +17,7 @@ import {
   TELEGRAM_USER_ROUTE,
   TEST_HOME_ROUTE,
   VIDEO_FROM_CAMERA_ROUTE,
-  TEMP
+  TEMP,
 } from "./static/routes.tsx";
 
 import { Login } from "./routes/Login.tsx";
@@ -34,6 +34,7 @@ import {
   LoginProtection,
 } from "./components/ProtectionComponents.tsx";
 import { SubscriberProtectedPage } from "./routes/SubscriberProtectedPage.tsx";
+import Camera from "./components/Camera/Camera.tsx";
 
 // Create router
 const router = createBrowserRouter([
@@ -66,7 +67,8 @@ const router = createBrowserRouter([
         path: VIDEO_FROM_CAMERA_ROUTE,
         element: (
           <LoginProtection>
-            <VideoFromCamera />
+            <Camera />
+            {/* <VideoFromCamera /> */}
           </LoginProtection>
         ),
       },

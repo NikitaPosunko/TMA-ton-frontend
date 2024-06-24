@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useErrorContext } from "../contexts/useContext";
 import { ERROR_ROUTE } from "../static/routes";
 import { Loading } from "../components/Components";
+import { LinkToLoginPage } from "../components/Links";
 
 export const SubscriberProtectedPage = () => {
   const [loading, setLoading] = useState(true);
@@ -46,5 +47,10 @@ export const SubscriberProtectedPage = () => {
     return <Loading />;
   }
 
-  return <div>{pageContent?.message}</div>;
+  return (
+    <div>
+      <p>{pageContent?.message}</p>
+      <LinkToLoginPage />
+    </div>
+  );
 };
